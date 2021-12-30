@@ -116,29 +116,24 @@ def main():
 
     valid_stat = ['cases', 'mortality', 'recovered', 'testing', 'active']
 
-    print("Enter 'q' anytime to exit. \n")
-
-    raw_loc = get_loc(codes)
-    raw_stat = get_stat(valid_stat)
-    raw_date = get_date()
-
-    fetch_info(url, raw_stat, raw_loc, raw_date)
-
-    continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ")  
     while True:   
-        if continue_req in ['y', 'Y']:
-            raw_loc = get_loc(codes)
-            raw_stat = get_stat(valid_stat)
-            raw_date = get_date()
+        print("Enter 'q' anytime to exit.")
 
-            fetch_info(url, raw_stat, raw_loc, raw_date)
-            continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
+        raw_loc = get_loc(codes)
+        raw_stat = get_stat(valid_stat)
+        raw_date = get_date()
+
+        fetch_info(url, raw_stat, raw_loc, raw_date)
+
+        continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
+
+        if continue_req in ['y', 'Y']:
+            continue
         elif continue_req in ['n', 'N']:
             exit(0)
         else:
             print("Not a valid response, please try again.")
             continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
-
 
 if __name__ == "__main__":
     main()

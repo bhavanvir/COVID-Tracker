@@ -22,30 +22,24 @@ def fetch_info(website, statistic, location, date):
     response = requests.get(website, params)
 
     if response.status_code != 200:
-        print("An error has occured.", response)
+        print("An error has occured.", response) 
+        print("Paramaters input: ", params)
     else:
         data = response.json()
 
-        if len(data['cases']) == 0:
+        if len(data['cases']) != 0:
+            print("Province: ", location.upper())
+            print("Date: ", date)
+            print_info(data, statistic)
+        else: 
             if date == datetime.today().strftime('%Y-%m-%d'):
                 print("No cases have been reported for " + date + " yet, please try again later.")
             else:
                 print("Entered date has no data available.")
-            exit(0)
-    
-    print("Province: ", location.upper())
-    print("Date: ", date)
-    print_info(data, statistic)
 
-def main():
-    url = 'https://api.opencovid.ca/timeseries'
-
-    codes = ['ab', 'bc', 'mb', 'nb', 'nl', 'nt', 'ns', 'nu', 'on', 'pe', 'qc', 'sk', 'yt']            
-
-    valid_stat = ['cases', 'mortality', 'recovered', 'testing', 'active']
-
+def get_loc(codes):
     while True:
-        print("Below are valid province codes:", end="")
+        print("\n" + "Below are valid province codes:", end="")
         letter_codes = """
         • Alberta: AB
         • British Columbia: BC
@@ -63,17 +57,18 @@ def main():
         """
         print(letter_codes)
 
-        raw_loc = input("Enter a two-letter province code or press 'q' to exit: ")
+        raw_loc = input("Enter a two-letter province code: ")
 
         if raw_loc in ['q', 'Q']:
             exit(0)
         else:
             if raw_loc.lower() in codes:
                 print("Valid two-letter province code. \n")
-                break
+                return raw_loc
             else:
                 print("Not a valid two-letter province code, please try again. \n")
 
+def get_stat(valid_stat):
     while True:
         print("Below are valid statistics:", end="")
         stats = """
@@ -92,10 +87,11 @@ def main():
         else:
             if raw_stat.lower() in valid_stat:
                 print("Valid statistic. \n")
-                break
+                return raw_stat
             else:
                 print("Not a valid statistic, please try again \n")
 
+def get_date():
     while True:
         raw_date = input("Please enter a valid date in YYYY-MM-DD format or enter 'today' for the current date: ")
 
@@ -107,12 +103,42 @@ def main():
                     raw_date = datetime.today().strftime('%Y-%m-%d')
                 else:
                     datetime.strptime(raw_date, '%Y-%m-%d')
-                print("Valid date format. \n")
-                break
+                print("Valid date format.")
+                print("\n" + "------------------------------------------------------------------------------------------------" + "\n")
+                return raw_date
             except ValueError:
                 print("Specified date is not in YYYY-MM-DD format. \n")
 
-    fetch_info(url, raw_stat, raw_loc, raw_date)            
+def main():
+    url = 'https://api.opencovid.ca/timeseries'
+
+    codes = ['ab', 'bc', 'mb', 'nb', 'nl', 'nt', 'ns', 'nu', 'on', 'pe', 'qc', 'sk', 'yt']            
+
+    valid_stat = ['cases', 'mortality', 'recovered', 'testing', 'active']
+
+    print("Enter 'q' anytime to exit. \n")
+
+    raw_loc = get_loc(codes)
+    raw_stat = get_stat(valid_stat)
+    raw_date = get_date()
+
+    fetch_info(url, raw_stat, raw_loc, raw_date)
+
+    continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ")  
+    while True:   
+        if continue_req in ['y', 'Y']:
+            raw_loc = get_loc(codes)
+            raw_stat = get_stat(valid_stat)
+            raw_date = get_date()
+
+            fetch_info(url, raw_stat, raw_loc, raw_date)
+            continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
+        elif continue_req in ['n', 'N']:
+            exit(0)
+        else:
+            print("Not a valid response, please try again.")
+            continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
+
 
 if __name__ == "__main__":
     main()

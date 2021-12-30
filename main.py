@@ -1,6 +1,16 @@
 from pip._vendor import requests
 from datetime import datetime
-import json
+
+def print_info(data, statistic):
+    to_fetch = statistic
+
+    if statistic == 'mortality':
+        to_fetch = 'deaths'
+    elif statistic == 'active':
+        to_fetch = 'active_cases'
+
+    for item in data[statistic]:
+        print(statistic.title() + ": ", item[to_fetch])
 
 def fetch_info(website, statistic, location, date):
     params = {
@@ -17,26 +27,15 @@ def fetch_info(website, statistic, location, date):
         data = response.json()
 
         if len(data['cases']) == 0:
-            print("If 'today' was selected, no cases have been reported yet; please try again later.")
+            if date == datetime.today().strftime('%Y-%m-%d'):
+                print("No cases have been reported for " + date + " yet, please try again later.")
+            else:
+                print("Entered date has no data available.")
             exit(0)
     
-    print("Province: ", location)
+    print("Province: ", location.upper())
     print("Date: ", date)
-    if statistic == 'cases':
-        for item in data['cases']:
-            print("Cases: ", item['cases'])
-    elif statistic == 'mortality':
-        for item in data['mortality']:
-            print("Deaths: ", item['deaths'])
-    elif statistic == 'recovered':
-        for item in data['recovered']:
-            print("Recovered: ", item['recovered'])
-    elif statistic == 'testing':
-        for item in data['testing']:
-            print("Recovered: ", item['testing'])
-    elif statistic == 'active':
-        for item in data['active']:
-            print("Active: ", item['active_cases'])
+    print_info(data, statistic)
 
 def main():
     url = 'https://api.opencovid.ca/timeseries'
@@ -78,11 +77,11 @@ def main():
     while True:
         print("Below are valid statistics:", end="")
         stats = """
-        • cases
-        • mortality 
-        • recovered 
-        • testing 
-        • active
+        • Cases
+        • Mortality 
+        • Recovered 
+        • Testing 
+        • Active
         """
         print(stats)
 

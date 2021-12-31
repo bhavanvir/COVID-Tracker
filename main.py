@@ -129,7 +129,7 @@ def main():
 
         if continue_req in ['y', 'Y']:
             continue
-        elif continue_req in ['n', 'N']:
+        elif continue_req in ['n', 'N', 'q', 'Q']:
             exit(0)
         else:
             print("Not a valid response, please try again.")

@@ -125,15 +125,18 @@ def main():
 
         fetch_info(url, raw_stat, raw_loc, raw_date)
 
-        continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
+        valid_req = False
 
-        if continue_req in ['y', 'Y']:
-            continue
-        elif continue_req in ['n', 'N', 'q', 'Q']:
-            exit(0)
-        else:
-            print("Not a valid response, please try again.")
+        while valid_req != True:
             continue_req = input("\n" + "Would you like to continue with a new query (Y/N): ") 
+
+            if continue_req in ['y', 'Y']:
+                valid_req = True
+            elif continue_req in ['n', 'N', 'q', 'Q']:
+                exit(0)
+            else:
+                print("Not a valid response, please try again.")
+                valid_req = False
 
 if __name__ == "__main__":
     main()

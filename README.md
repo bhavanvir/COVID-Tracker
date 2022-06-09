@@ -1,2 +1,2 @@
-# jubilant-spoon
-COVID-19 tracker for Canadian provinces and territories
+# COVID-Tracker
+A interactive COVID-19 tracker for Canadian provinces and territories
